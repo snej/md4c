@@ -169,7 +169,7 @@ static void
 render_utf8_codepoint(MD_HTML* r, unsigned codepoint,
                       void (*fn_append)(MD_HTML*, const MD_CHAR*, MD_SIZE))
 {
-    static const MD_CHAR utf8_replacement_char[] = { 0xef, 0xbf, 0xbd };
+    static const unsigned char utf8_replacement_char[] = { 0xef, 0xbf, 0xbd };
 
     unsigned char utf8[4];
     size_t n;
@@ -197,7 +197,7 @@ render_utf8_codepoint(MD_HTML* r, unsigned codepoint,
     if(0 < codepoint  &&  codepoint <= 0x10ffff)
         fn_append(r, (char*)utf8, (MD_SIZE)n);
     else
-        fn_append(r, utf8_replacement_char, 3);
+        fn_append(r, (char*)utf8_replacement_char, 3);
 }
 
 /* Translate entity to its UTF-8 equivalent, or output the verbatim one
@@ -561,7 +561,7 @@ md_html(const MD_CHAR* input, MD_SIZE input_size,
 
     /* Consider skipping UTF-8 byte order mark (BOM). */
     if(renderer_flags & MD_HTML_FLAG_SKIP_UTF8_BOM  &&  sizeof(MD_CHAR) == 1) {
-        static const MD_CHAR bom[3] = { 0xef, 0xbb, 0xbf };
+        static const unsigned char bom[3] = { 0xef, 0xbb, 0xbf };
         if(input_size >= sizeof(bom)  &&  memcmp(input, bom, sizeof(bom)) == 0) {
             input += sizeof(bom);
             input_size -= sizeof(bom);
